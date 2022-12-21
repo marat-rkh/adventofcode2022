@@ -7,6 +7,36 @@ import (
 	"strings"
 )
 
+var letterScore = map[string]int{
+	"X": 1,
+	"Y": 2,
+	"Z": 3,
+}
+
+var win = map[string]string{
+	"A": "Y",
+	"B": "Z",
+	"C": "X",
+}
+
+var draw = map[string]string{
+	"A": "X",
+	"B": "Y",
+	"C": "Z",
+}
+
+var loose = map[string]string{
+	"A": "Z",
+	"B": "X",
+	"C": "Y",
+}
+
+var roundResult = map[string]map[string]string{
+	"X": loose,
+	"Y": draw,
+	"Z": win,
+}
+
 func main() {
 	data, err := os.ReadFile("day2/input.txt")
 	if err != nil {
@@ -17,47 +47,14 @@ func main() {
 	for _, round := range rounds {
 		letters := strings.Split(round, " ")
 		opponentLetter := letters[0]
-		myLetter := letters[1]
-		roundScore := letterScore(myLetter)
-		if isWin(opponentLetter, myLetter) {
+		myLetter := roundResult[letters[1]][opponentLetter]
+		roundScore := letterScore[myLetter]
+		if win[opponentLetter] == myLetter {
 			roundScore += 6
-		} else if isDraw(opponentLetter, myLetter) {
+		} else if draw[opponentLetter] == myLetter {
 			roundScore += 3
 		}
 		totalScore += roundScore
 	}
 	fmt.Println(totalScore)
-}
-
-func letterScore(letter string) int {
-	switch letter {
-	case "X":
-		return 1
-	case "Y":
-		return 2
-	default:
-		return 3
-	}
-}
-
-func isWin(opponentLetter string, myLetter string) bool {
-	switch opponentLetter {
-	case "A":
-		return myLetter == "Y"
-	case "B":
-		return myLetter == "Z"
-	default:
-		return myLetter == "X"
-	}
-}
-
-func isDraw(opponentLetter string, myLetter string) bool {
-	switch opponentLetter {
-	case "A":
-		return myLetter == "X"
-	case "B":
-		return myLetter == "Y"
-	default:
-		return myLetter == "Z"
-	}
 }
